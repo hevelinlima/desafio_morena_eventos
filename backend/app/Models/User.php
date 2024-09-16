@@ -5,7 +5,6 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Base implements JWTSubject
@@ -63,5 +62,14 @@ class User extends Base implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function events(){
+        return $this->hasMany(Events::class, 'owner_id');
+    }
+
+    public function eventGuests()
+    {
+        return $this->hasMany(EventGuest::class);
     }
 }
