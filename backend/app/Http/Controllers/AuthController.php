@@ -88,34 +88,43 @@ class AuthController extends Controller
             return response()->json(['error' => $validator->messages()], 200);
         }
 
-        try{
-            JWTAuth::invalidate($request->token);
-
+        try {
+            // Pega o token do cabeçalho Authorization
+            $token = JWTAuth::parseToken();
+    
+            // Invalida o token
+            JWTAuth::invalidate($token);
+    
             return response()->json([
-                'success'=> true,
-                'message'=> 'Usuário deslogado.'
+                'success' => true,
+                'message' => 'Usuário deslogado com sucesso.'
             ]);
         } catch (JWTException $e) {
             return response()->json([
-                'success'=> false,
-                'message'=> 'Usuário não pode ser deslogado'
+                'success' => false,
+                'message' => 'Falha ao deslogar, tente novamente.'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     public function get_user(Request $request) 
     {
-        $validator = Validator::make($request->only('token'), [
-            'token' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400); // Status 400 para requisições inválidas
-        }        
-
-        $user = JWTAuth::authenticate($request->token);
-
-        return response()->json(['user'=> $user]);
+        try {
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuário não encontrado.'
+                ], 404); // Não encontrado
+            }
+        } catch (JWTException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token inválido ou expirado.'
+            ], 401); // Não autorizado
+        }
+    
+        // Retorna o usuário autenticado
+        return response()->json(['user' => $user]);
     }
 
 }
