@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EventGuest;
 use App\Models\Events;
 use App\Models\User;
 use App\Services\ViaCepService;
@@ -87,6 +88,11 @@ class EventsController extends Controller
             $event->is_active = $validated['is_active'];
             $event->owner_id = $ownerId;
             $event->save();
+
+            $eventGuest = new EventGuest();
+            $eventGuest->event_id = $event->id;
+            $eventGuest->user_id = $ownerId;
+            $eventGuest->save();
 
             return response()->json(['success' => 'Evento criado com sucesso', 'event' => $event]);
         } catch (\Throwable $th) {
