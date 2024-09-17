@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Events;
+use App\Models\User;
 use App\Services\ViaCepService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,7 @@ class EventsController extends Controller
 
     public function index()
     {
-        $events = Auth::user()->events; // Retorna todos os eventos criados pelo usuário
+        $events = Events::all(); // Retorna todos os eventos cadastrados
         return response()->json($events);
     }
 
@@ -28,8 +29,8 @@ class EventsController extends Controller
     {
         $event = Events::find($id);
 
-        if (!$event || $event->owner_id != Auth::id()) {
-            return response()->json(['error' => 'Evento não encontrado ou acesso negado'], 403);
+        if (!$event) {
+            return response()->json(['error' => 'Evento não encontrado'], 404);
         }
 
         return response()->json($event);
@@ -112,5 +113,20 @@ class EventsController extends Controller
         $event->delete();
 
         return response()->json(['success' => 'Evento removido com sucesso']);
+    }
+
+    public function eventsByUser($userId)
+    {
+        // Verifica se o usuário existe
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuário não encontrado'], 404);
+        }
+
+        // Retorna todos os eventos criados pelo usuário especificado
+        $events = $user->events; 
+
+        return response()->json($events);
     }
 }
