@@ -8,8 +8,8 @@ use App\Http\Controllers\EventsController;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'authenticate']);
 
-Route::get('events', [EventsController::class, 'index']);        
-Route::get('events/{id}', [EventsController::class, 'show']); 
+Route::get('events_list', [EventsController::class, 'index']);        
+Route::get('events_list/{id}', [EventsController::class, 'show']); 
 
 // Route::group(['middleware'=> ['auth.jwt']], function(){
 //   

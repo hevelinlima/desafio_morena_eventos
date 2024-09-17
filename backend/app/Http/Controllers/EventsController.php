@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Events;
 use App\Models\User;
 use App\Services\ViaCepService;
+use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class EventsController extends Controller
@@ -47,23 +49,49 @@ class EventsController extends Controller
             'number' => 'required|string',
             'city' => 'required|string',
             'state' => 'required|string',
+            'starts_at' => 'required|date_format:Y-m-d H:i:s',
+            'ends_at' => 'required|date_format:Y-m-d H:i:s',
+            'max_subscription' => 'required|integer',
+            'is_active' => 'required|boolean',
         ]);
 
         // Verificar o CEP
         $addressData = $this->viaCepService->getAddressByCep($validated['zipcode']);
 
         if (!$addressData) {
-            return response()->json(['error' => 'CEP inválido'], 400);
+            return response()->json(['error' => 'CEP inválido'], Response::HTTP_BAD_REQUEST);
         }
 
-        $event = Events::create([
-            'owner_id' => Auth::id(),
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'address' => $validated['address'] . ', ' . $validated['number'] . ', ' . $validated['city'] . ' - ' . $validated['state'],
-        ]);
+        // Verifica se o Auth::id() está retornando o ID corretamente
+        $ownerId = Auth::id();
+        if (!$ownerId) {
+            return response()->json(['error' => 'Usuário não autenticado'], Response::HTTP_FORBIDDEN);
+        }
 
-        return response()->json(['success' => 'Evento criado com sucesso', 'event' => $event]);
+        try {
+            $starts_at = new DateTime($validated['starts_at']);
+            $ends_at = new DateTime($validated['ends_at']);
+
+            $event = new Events();
+            $event->name = $validated['name'];
+            $event->description = $validated['description'];
+            $event->address = $validated['address'] . ', ' . $validated['number'] . ', ' . $validated['city'] . ' - ' . $validated['state'];
+            $event->complement = $validated['complement'] ?? '';
+            $event->zipcode = $validated['zipcode'];
+            $event->number = $validated['number'];
+            $event->city = $validated['city'];
+            $event->state = $validated['state'];
+            $event->starts_at = $starts_at;
+            $event->ends_at = $ends_at;
+            $event->max_subscription = $validated['max_subscription'];
+            $event->is_active = $validated['is_active'];
+            $event->owner_id = $ownerId;
+            $event->save();
+
+            return response()->json(['success' => 'Evento criado com sucesso', 'event' => $event]);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Atualizar um evento existente
@@ -105,13 +133,13 @@ class EventsController extends Controller
     public function destroy($id)
     {
         $event = Events::find($id);
-
+    
         if (!$event || $event->owner_id != Auth::id()) {
             return response()->json(['error' => 'Evento não encontrado ou acesso negado'], 403);
         }
-
+    
         $event->delete();
-
+    
         return response()->json(['success' => 'Evento removido com sucesso']);
     }
 
