@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -42,59 +43,40 @@ class AuthController extends Controller
 
     public function authenticate(Request $request)
     {
-        $credentials = $request->only('email', 'password');
-
-        $validator = Validator::make($credentials, [
-            'email' => 'required|email',
-            'password' => 'required|string|min:6|max:50'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
-        }
-
         try {
-            if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Login inválido.'
-                ], 401);
+            $token = JWTAuth::attempt($request->only('email', 'password'));
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized'], 401);
             }
         } catch (JWTException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Não foi possível criar token.'
-            ], 500);
+            return response()->json(['error' => 'Could not create token'], 500);
         }
 
-        return response()->json(['success' => true])
-            ->cookie('token', $token, 60, null, null, true, true);
+        return $this->respondWithToken($token);
     }
 
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'success' => true,
+            'token' => $token,
+        ]);
+    }
 
     public function logout(Request $request)
     {
-        $validator = Validator::make($request->only('token'), [
-            'token' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
-        }
-
         try {
             // Pega o token do cabeçalho Authorization
             $token = JWTAuth::parseToken();
-    
+
             // Invalida o token
             JWTAuth::invalidate($token);
 
-
-    
             return response()->json([
-            'success' => true,
-            'message' => 'Usuário deslogado com sucesso.'
-            ])->withCookie(cookie()->forget('token'));
+                'success' => true,
+                'message' => 'Usuário deslogado com sucesso.'
+            ], Response::HTTP_OK)->withCookie(cookie()->forget('token'));
+            
         } catch (JWTException $e) {
             return response()->json([
                 'success' => false,
@@ -102,6 +84,7 @@ class AuthController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
 
     public function get_user(Request $request) 
     {
@@ -122,11 +105,8 @@ class AuthController extends Controller
         // Retorna o usuário autenticado
         return response()->json([
             'success' => true,
-            'user' => [
-                'name' => $user->name,
-                'email' => $user->email, 
-            ]
-        ]);
+            'user' => $user->makeHidden(['password']) // Remove o campo 'password'
+        ], 200);
     }
 
 }

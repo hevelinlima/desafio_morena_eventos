@@ -23,8 +23,14 @@ class EventsController extends Controller
 
     public function index()
     {
-        $events = Events::all(); // Retorna todos os eventos cadastrados
-        return response()->json($events);
+        $events = Events::orderBy('created_at', 'desc')
+                        ->with('owner:id,name')  
+                        ->paginate(10);  
+
+        return response()->json([
+            'success' => true,
+            'events' => $events
+        ]);
     }
 
     // Exibir os detalhes de um evento
