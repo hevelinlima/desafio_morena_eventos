@@ -7,7 +7,7 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   getUser: () => Promise<void>;
   user: User | null;
-}
+};
 
 export const AuthContext = createContext({} as AuthContextType);
 
@@ -35,9 +35,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(data.message || "Login falhou");
       }
 
-      // Armazena o token no cookie
       document.cookie = `token=${data.token}; path=/`;
-
       setIsAuthenticated(true);
     } catch (error) {
       console.error("Erro ao fazer login:", error);
@@ -84,7 +82,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
   
-
   function getCookie(name: string): string | undefined {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);

@@ -34,6 +34,9 @@ export function Header() {
                 <NavLink href="/meus_eventos/create">Criar Evento |</NavLink>
               </NavItem>
               <NavItem>
+                <NavLink href={'users/{userId}'}>Meus eventos |</NavLink>
+              </NavItem>
+              <NavItem>
                 <Username>Bem-vindo, {user?.name || "Usuário"} |</Username>
               </NavItem>
               <NavItem>

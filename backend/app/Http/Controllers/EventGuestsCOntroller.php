@@ -13,8 +13,8 @@ class EventGuestsCOntroller extends Controller
     {
         try {
             $event = Events::find($eventId);
-            if (!$event || $event->owner_id != Auth::id()) {
-                return response()->json(['error' => 'Evento não encontrado ou acesso negado'], 403);
+            if (!$event) {
+                return response()->json(['error' => 'Evento não encontrado'], 404);
             }
 
             $validated = $request->validate([
@@ -48,6 +48,7 @@ class EventGuestsCOntroller extends Controller
             ], 500);
         }
     }
+
 
     // Remove um convidado de um evento
     public function destroy($eventId, $guestId)
