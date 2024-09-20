@@ -12,6 +12,11 @@ export const CardContainer = styled.div`
   flex-direction: column;
   align-items: left;
   justify-content: center;
+
+  &:hover{
+    cursor: pointer;
+    background-color: #f3f3f3;
+  }
 `
 
 export const CardTitle =styled.div`

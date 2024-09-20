@@ -6,6 +6,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   getUser: () => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   user: User | null;
 };
 
@@ -81,6 +82,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error("Erro ao obter usuário:", error);
     }
   }
+
+  async function register(name: string, email: string, password: string): Promise<void> {
+    try {
+      const response = await fetch("http://localhost:8000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao cadastrar");
+      }
+  
+      alert("Cadastro realizado com sucesso, faça seu login");
+    } catch (error) {
+      console.error("Erro ao cadastrar:", error);
+    }
+  }
   
   function getCookie(name: string): string | undefined {
     const value = `; ${document.cookie}`;
@@ -89,7 +112,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut, getUser, user }}>
+    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut, getUser, user, register }}>
       {children}
     </AuthContext.Provider>
   );

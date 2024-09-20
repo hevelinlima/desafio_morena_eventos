@@ -34,9 +34,6 @@ export function Header() {
                 <NavLink href="/meus_eventos/create">Criar Evento |</NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href={'users/{userId}'}>Meus eventos |</NavLink>
-              </NavItem>
-              <NavItem>
                 <Username>Bem-vindo, {user?.name || "Usuário"} |</Username>
               </NavItem>
               <NavItem>
@@ -44,9 +41,14 @@ export function Header() {
               </NavItem>
             </>
           ) : (
-            <NavItem>
-              <NavLink href="/login">Entrar |</NavLink>
-            </NavItem>
+            <>
+              <NavItem>
+                <NavLink href="/meus_eventos/create">Criar Evento |</NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink href="/login">Entrar</NavLink>
+              </NavItem>
+            </>
           )}
         </NavList>
       </Nav>
