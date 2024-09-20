@@ -1,5 +1,9 @@
+"use client"
+
 import { AuthContext } from "@/contexts/AuthContext";
 import { useContext, useEffect, useState } from "react";
+import { EventForm, FormContainers, MidContainer, RegisterEventButton } from "./styles";
+import { Input, Labels, Subtitle, Title } from "../login/styles";
 
 const EventRegistration = () => {
   const { isAuthenticated, getUser, user } = useContext(AuthContext);
@@ -83,61 +87,71 @@ const EventRegistration = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label>Name</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Description</label>
-          <input type="text" name="description" value={formData.description} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Address</label>
-          <input type="text" name="address" value={formData.address} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Complement</label>
-          <input type="text" name="complement" value={formData.complement} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Zipcode</label>
-          <input type="text" name="zipcode" value={formData.zipcode} onChange={handleZipcodeChange} required />
-        </div>
-        <div>
-          <label>Number</label>
-          <input type="text" name="number" value={formData.number} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>City</label>
-          <input type="text" name="city" value={formData.city} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>State</label>
-          <input type="text" name="state" value={formData.state} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Starts At</label>
-          <input type="datetime-local" name="starts_at" value={formData.starts_at} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Ends At</label>
-          <input type="datetime-local" name="ends_at" value={formData.ends_at} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Max Subscription</label>
-          <input type="number" name="max_subscription" value={formData.max_subscription} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Active</label>
-          <input type="checkbox" name="is_active" checked={formData.is_active} onChange={() => setFormData(prev => ({ ...prev, is_active: !prev.is_active }))} />
-        </div>
-      </div>
+    <EventForm onSubmit={handleSubmit}>
+      <Title>Cadastrar evento</Title>
+      <Subtitle>Cadastre o seu evento na plataforma</Subtitle>
+      <MidContainer>
+        <FormContainers>
+          <Labels>
+            <label>Ativo?</label>
+            <input type="checkbox" name="is_active" checked={formData.is_active} onChange={() => setFormData(prev => ({ ...prev, is_active: !prev.is_active }))} />
+          </Labels>
+          <Labels>
+            <label>Nome</label>
+            <Input type="text" name="name" placeholder="Digite o nome do evento" value={formData.name} onChange={handleChange} required />
+          </Labels>
+          <Labels>
+            <label>Descrição</label>
+            <Input type="text" name="description" placeholder="SObre o evento"
+            value={formData.description} onChange={handleChange} required />
+          </Labels>
+          <Labels>
+            <label>Data/Hora do início do evento</label>
+            <Input type="datetime-local" name="starts_at" value={formData.starts_at} onChange={handleChange} required />
+          </Labels>
+          <Labels>
+            <label>Data/Hora do encerramento do evento</label>
+            <Input type="datetime-local" name="ends_at" value={formData.ends_at} onChange={handleChange} required />
+          </Labels>
+          <Labels>
+            <label>Vagas para o evento</label>
+            <Input type="number" name="max_subscription"
+            placeholder="Limite máximo de pessoas" value={formData.max_subscription} onChange={handleChange} required />
+          </Labels>
+        </FormContainers>
+        <FormContainers>
+          <Labels>
+            <label>CEP</label>
+            <Input type="text" name="zipcode" placeholder="Apenas números" value={formData.zipcode} onChange={handleZipcodeChange} required />
+          </Labels>
+          <Labels>
+            <label>Endereço</label>
+            <Input type="text" name="address" value={formData.address} onChange={handleChange} required />
+          </Labels>
+          <Labels>
+            <label>Número</label>
+            <Input type="text" name="number" value={formData.number} onChange={handleChange} required />
+          </Labels>
+          <Labels>
+            <label>Complemento</label>
+            <Input type="text" name="complement" value={formData.complement} onChange={handleChange} required />
+          </Labels>
+          
+          <Labels>
+            <label>Cidade</label>
+            <Input type="text" name="city" value={formData.city} onChange={handleChange} required />
+          </Labels>
+          <Labels>
+            <label>Estado</label>
+            <Input type="text" name="state" value={formData.state} onChange={handleChange} required />
+          </Labels>
+        </FormContainers>
+      </MidContainer>
+      <RegisterEventButton type="submit">Cadastrar</RegisterEventButton>
       {error && <p>{error}</p>}
-      <button type="submit">Register Event</button>
-    </form>
+    </EventForm>
   );
 };
 
 export default EventRegistration;
+

@@ -6,6 +6,7 @@ import { HeaderContainer, LogoutButton, Nav, NavItem, NavLink, NavList, Username
 import logoImage from '../../../public/logo.svg'
 import Image from "next/image";
 import Link from "next/link";
+import { UserCircle } from "phosphor-react";
 
 export function Header() {
   const { isAuthenticated, user, signOut } = useContext(AuthContext);
@@ -34,7 +35,7 @@ export function Header() {
                 <NavLink href="/criar_eventos">Criar Evento |</NavLink>
               </NavItem>
               <NavItem>
-                <Username>Bem-vindo, {user?.name || "Usuário"} |</Username>
+                <Username>Olá, {user?.name || "Usuário"} |</Username>
               </NavItem>
               <NavItem>
                 <LogoutButton onClick={handleSignOut}>Sair</LogoutButton>
@@ -43,7 +44,7 @@ export function Header() {
           ) : (
             <>
               <NavItem>
-                <NavLink href="/meus_eventos/create">Criar Evento |</NavLink>
+                <NavLink href="/meus_eventos">Criar Evento |</NavLink>
               </NavItem>
               <NavItem>
                 <NavLink href="/login">Entrar</NavLink>

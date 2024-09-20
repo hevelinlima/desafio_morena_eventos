@@ -1,7 +1,9 @@
+"use client"
+
 import React from 'react';
 import { useRouter } from 'next/router';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Input, Button, Container, Form, Title, Labels, Subtitle, AccessButton } from './styles';
+import { Input, Container, Form, Title, Labels, Subtitle, AccessButton } from './styles';
 import { useContext } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 

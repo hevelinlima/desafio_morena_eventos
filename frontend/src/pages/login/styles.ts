@@ -33,6 +33,7 @@ export const Input = styled.input`
   font-size: 1rem;
   color: #333;
 
+
   &:focus {
     border-color: #333;
     outline: none;
@@ -57,6 +58,7 @@ export const Labels = styled.div`
   width: inherit;
   display: flex;
   flex-direction: column;
+  justify-content: left;
   gap: 0.25rem;
 `
 
