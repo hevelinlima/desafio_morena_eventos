@@ -1,5 +1,5 @@
 import { User } from "@/types/User";
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -7,6 +7,20 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   getUser: () => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
+  registerEvent: (eventData: {
+    name: string;
+    description: string;
+    address: string;
+    zipcode: string;
+    number: string;
+    city: string;
+    state: string;
+    starts_at: string; // Formato: XX/XX/XXXX XX:XX:XX
+    ends_at: string;   // Formato: XX/XX/XXXX XX:XX:XX
+    complement: string;
+    max_subscription: number;
+    is_active: boolean;
+  }) => Promise<void>;
   user: User | null;
 };
 
@@ -70,18 +84,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
           "Authorization": `Bearer ${getCookie("token")}`
         },
       });
-  
+      
       const data = await response.json();
-  
-      if (!response.ok) {
+      
+      if (response.ok) {
+        setUser(data.user);
+      } else {
         throw new Error(data.message || "Erro ao obter usuário");
       }
-  
-      setUser(data.user); 
     } catch (error) {
       console.error("Erro ao obter usuário:", error);
+      setIsAuthenticated(false); 
     }
   }
+  
 
   async function register(name: string, email: string, password: string): Promise<void> {
     try {
@@ -104,6 +120,53 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error("Erro ao cadastrar:", error);
     }
   }
+
+  async function registerEvent(eventData: {
+    name: string;
+    description: string;
+    address: string;
+    zipcode: string;
+    number: string;
+    city: string;
+    state: string;
+    starts_at: string;
+    ends_at: string;
+    complement: string;
+    max_subscription: number;
+    is_active: boolean;
+  }): Promise<void> {
+    try {
+      const response = await fetch("http://localhost:8000/api/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getCookie("token")}`,
+        },
+        body: JSON.stringify(eventData),
+      });
+
+      const data = await response.json();
+
+      console.log("Registrando evento com dados:", eventData);
+
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao cadastrar evento");
+      }
+
+      alert("Evento cadastrado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao cadastrar evento:", error);
+    }
+  }
+
+  useEffect(() => {
+    const token = getCookie("token");
+    if (token) {
+      setIsAuthenticated(true);
+      getUser();
+    }
+  }, []);
   
   function getCookie(name: string): string | undefined {
     const value = `; ${document.cookie}`;
@@ -112,7 +175,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut, getUser, user, register }}>
+    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut, getUser, user, register, registerEvent }}>
       {children}
     </AuthContext.Provider>
   );

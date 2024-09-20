@@ -4,17 +4,8 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { AddressInfo, ContentAddress, EventContainer, EventSubtitle, EventTitle, GroupInfo, SubscriptionButton } from './styles';
 import { CalendarBlank, MapPinLine } from 'phosphor-react';
 import { Event } from '@/types/Event';
-import { formatDate, formatDateWithWeekday, formatTime } from '@/utils/formatDate';
+import { formatDateWithWeekday, formatTime } from '@/utils/formatDate';
 
-// interface Event {
-//   id: number;
-//   name: string;
-//   description: string;
-//   address: string;
-//   city: string;
-//   starts_at: string;
-//   ends_at: string;
-// }
 
 export default function EventDetails() {
   const { user, isAuthenticated } = useContext(AuthContext);

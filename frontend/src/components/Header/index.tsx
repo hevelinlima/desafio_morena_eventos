@@ -31,7 +31,7 @@ export function Header() {
           {isAuthenticated ? (
             <>
               <NavItem>
-                <NavLink href="/meus_eventos/create">Criar Evento |</NavLink>
+                <NavLink href="/criar_eventos">Criar Evento |</NavLink>
               </NavItem>
               <NavItem>
                 <Username>Bem-vindo, {user?.name || "Usuário"} |</Username>
