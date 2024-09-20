@@ -75,10 +75,6 @@ Antes de começar, certifique-se de ter os seguintes itens instalados em sua má
   ```bash
    php artisan serve
    ```
-8. **Inicie o servidor Laravel**:
-  ```bash
-   php artisan serve
-   ```
 O backend estará disponível em http://localhost:8000.
 
 9. **Navegue até a pasta do frontend**:
